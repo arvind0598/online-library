@@ -1,7 +1,6 @@
 # The Online Library
 An online semi-library system using Java Servlets, JSP and Oracle SQL with PL SQL, made for DBS Lab Project, CCE V Semester. 
 
----
 
 ## Setup Instructions
 
@@ -21,4 +20,8 @@ public class Credentials {
 }
 ```
 
+Use the @ command in the SQL Plus CLI to run the SQL scripts, in the order setup->more->data
+
 Run project using Netbeans.
+
+Ps. Remember to commit.

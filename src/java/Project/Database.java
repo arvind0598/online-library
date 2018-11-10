@@ -5,8 +5,15 @@
  */
 package Project;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.*;
 import java.util.regex.Pattern;
+import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.JSONObject;
 
 /**
@@ -112,4 +119,32 @@ class Helper {
         // Return the string with trimming 
         return s.toString().trim(); 
     } 
+    
+    public static void sendEmail(String email, int order, String name) 
+            throws MalformedURLException, IOException {
+
+        String preURL = String.format("https://script.google.com/macros/s/AKfycbwZm6E2OzyHqnjwQAe10TgAobIyH1tmhk3nWpt_E3ahlMIajm8/exec?email=%s&order=%d&name=%s", email, order, name.split(" (?!.* )")[0]);
+
+        URL url = new URL(preURL);
+
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("GET " + responseCode);
+
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder lol = new StringBuilder();
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                lol.append(inputLine);
+            }
+
+            in.close();
+        } else {
+            System.out.println("GET request not worked");
+        }
+    }
 }
