@@ -49,7 +49,6 @@ create table orders(
 	id int primary key,
 	cust_id int references login(id) on delete cascade,
 	bill int not null,
-	status int default 0 not null,
 	init_time timestamp default current_timestamp not null
 );
 
@@ -57,7 +56,6 @@ create table orderitems(
 	order_id int references orders(id) on delete cascade,
 	book_id int references books(id) on delete cascade,
 	qty int default 1 not null,
-	active int default 1 not null,
 	constraint c_orderitems primary key(order_id, book_id)
 );
 
