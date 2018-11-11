@@ -54,9 +54,21 @@ public class Database {
             stmt.setString(1, name);
             stmt.setString(2, email);
             stmt.setString(3, password);
-            System.out.println(stmt);
             stmt.execute();
+            status = true;
             conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+
+    Boolean logoutUser(int user_id) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("call logout_user(?)");
+            stmt.setInt(1, user_id);
+            stmt.execute();
             status = true;
         } catch (Exception e) {
             Helper.handleError(e);
@@ -72,9 +84,11 @@ public class Database {
 
             while (res.next()) {
                 String name = res.getString(2);
-                name = Helper.capitailizeWord(name);
+                name = Helper.capitalizeWord(name);
                 obj.put(res.getInt(1), name);
             }
+
+            conn.close();
         } catch (Exception e) {
             Helper.handleError(e);
         }
@@ -93,19 +107,21 @@ public class Database {
                 book.put("id", res.getInt(1));
                 book.put("name", res.getString(3));
                 book.put("cost", res.getInt(5));
-                
+
                 int genreID = res.getInt(2);
-                
-                if(!obj.containsKey(genreID)) {
+
+                if (!obj.containsKey(genreID)) {
                     JSONObject genre = new JSONObject();
                     genre.put("name", res.getString(4));
                     genre.put("data", new JSONArray());
                     obj.put(res.getInt(2), genre);
                 }
-                
-                ((JSONArray)((JSONObject)obj.get(genreID)).get("data")).add(book);
+
+                ((JSONArray) ((JSONObject) obj.get(genreID)).get("data")).add(book);
             }
-            
+
+            conn.close();
+
         } catch (Exception e) {
             Helper.handleError(e);
         }
@@ -126,7 +142,9 @@ public class Database {
                 book.put("cost", res.getInt(3));
                 obj.put(res.getInt(1), book);
             }
-            
+
+            conn.close();
+
         } catch (Exception e) {
             Helper.handleError(e);
         }
@@ -145,6 +163,32 @@ public class Database {
                 obj.put("name", res.getString(2));
                 obj.put("address", res.getString(3));
             }
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+
+        return obj;
+    }
+
+    public JSONObject getCartDetails(int customer_id) {
+        JSONObject obj = new JSONObject();
+        try (Connection conn = connectSql()) {
+            PreparedStatement stmt = conn.prepareStatement("select book_id, qty, name, cost, owner from cart join books on(book_id = id) where cust_id = ? and active = 1");
+            stmt.setInt(1, customer_id);
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                JSONObject books = new JSONObject();
+                books.put("qty", res.getInt(2));
+                books.put("name", Helper.capitalizeWord(res.getString(3)));
+                books.put("cost", res.getInt(4));
+                books.put("secondhand", res.getInt(5) != 0);
+                obj.put(res.getInt(1), books);
+            }
+
+            conn.close();
         } catch (Exception e) {
             Helper.handleError(e);
         }
@@ -162,11 +206,30 @@ public class Database {
             if (res.next()) {
                 x = res.getString(1);
             }
+
+            conn.close();
         } catch (Exception e) {
             Helper.handleError(e);
         }
 
         return x;
+    }
+
+    Boolean updateCart(int customer_id, int book_id, int qty) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("call update_cart_qty(?,?,?)");
+            stmt.setInt(1, customer_id);
+            stmt.setInt(2, book_id);
+            stmt.setInt(3, qty);
+            stmt.execute();
+            conn.close();
+            status = true;
+
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
     }
 }
 
@@ -214,7 +277,7 @@ class Helper {
         return status;
     }
 
-    public static String capitailizeWord(String str) {
+    public static String capitalizeWord(String str) {
         StringBuffer s = new StringBuffer();
         char ch = ' ';
         for (int i = 0; i < str.length(); i++) {
