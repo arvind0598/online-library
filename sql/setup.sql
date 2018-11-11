@@ -26,23 +26,25 @@ create table genres(
 
 create table books(
 	id int primary key,
-	genre int references genres(id) on delete cascade,
-	name varchar(50) unique not null,
+	genre int references genres(id) on delete cascade not null,
+	name varchar(50) not null,
 	details varchar(200) not null,
 	cost int not null,
 	keywords varchar(200),
 	stock int default 1 not null,
 	owner int default null references login(id) on delete cascade,
 	age real default 0 not null,
-	display int default 1 not null
+	display int default 1 not null,
+	constraint c_books_pos check(cost > 0 and stock >= 0 and age >= 0)
 );
 
 create table cart(
-	cust_id int references login(id),
-	book_id int references books(id),
+	cust_id int references login(id) on delete cascade,
+	book_id int references books(id) on delete cascade,
 	qty int default 1 not null,
 	active int default 1 not null,
-	constraint c_cart primary key(cust_id, book_id)
+	constraint c_cart primary key(cust_id, book_id),
+	constraint c_cart_pos check(qty >= 0)
 );
 
 create table orders(
@@ -56,12 +58,13 @@ create table orderitems(
 	order_id int references orders(id) on delete cascade,
 	book_id int references books(id) on delete cascade,
 	qty int default 1 not null,
-	constraint c_orderitems primary key(order_id, book_id)
+	constraint c_orderitems primary key(order_id, book_id),
+	constraint c_orders_pos check(qty >= 0)
 );
 
 create table internallogs(
 	id int primary key,
-	login int references login(id) not null,
+	login int references login(id) on delete cascade not null,
 	action varchar(30) not null,
 	details varchar(50) not null,
 	time_performed timestamp default current_timestamp not null
@@ -69,7 +72,7 @@ create table internallogs(
 
 create table externallogs(
 	id int primary key,
-	email int not null,
+	email varchar(50) not null,
 	action varchar(30) not null,
 	time_performed timestamp default current_timestamp not null
 );
