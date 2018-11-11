@@ -105,14 +105,14 @@ public class Database {
 
             while (res.next()) {
                 JSONObject book = new JSONObject();
-                book.put("name", res.getString(3));
+                book.put("name", Helper.capitalizeWord(res.getString(3)));
                 book.put("cost", res.getInt(5));
 
                 int genreID = res.getInt(2);
 
                 if (!obj.containsKey(genreID)) {
                     JSONObject genre = new JSONObject();
-                    genre.put("name", res.getString(4));
+                    genre.put("name", Helper.capitalizeWord(res.getString(4)));
                     genre.put("data", new JSONObject());
                     obj.put(res.getInt(2), genre);
                 }
@@ -269,6 +269,50 @@ public class Database {
             Helper.handleError(e);
         }
         return status;
+    }
+    
+    public Boolean bookInCart(int customer_id, int book_id) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            PreparedStatement stmt = conn.prepareStatement("select * from cart where cust_id = ? and book_id = ?");
+            stmt.setInt(1, customer_id);
+            stmt.setInt(2, book_id);
+            ResultSet res = stmt.executeQuery();
+
+            if(res.next()) {
+                status = true;
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+    
+    public JSONObject getBookDetails(int book_id) {
+        JSONObject obj = new JSONObject();
+        try {
+            Connection conn = connectSql();
+            PreparedStatement stmt = conn.prepareStatement("select genres.name, books.name, details, cost, age, owner from books join genres on(books.genre = genres.id) where books.id = ? and stock > 0 and display = 1");
+            stmt.setInt(1, book_id);
+            ResultSet res = stmt.executeQuery();
+
+            if (res.next()) {
+                obj.put("genre", Helper.capitalizeWord(res.getString(1)));
+                obj.put("name", Helper.capitalizeWord(res.getString(2)));
+                obj.put("details", res.getString(3));
+                obj.put("cost", res.getInt(4));
+                obj.put("age", res.getInt(5));
+                obj.put("secondhand", res.getInt(6) != 0);
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+
+        return obj;
     }
 }
 

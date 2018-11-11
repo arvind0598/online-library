@@ -51,6 +51,7 @@
                                     <p><b> Please Enter Address to place order. </b></p>
                                 </c:otherwise>
                             </c:choose>
+                            <p> You have donated ${details.donated eq null ? 0 : details.donated} books so far. </p>
                         </div>
                     </div>
                 </div>
@@ -64,13 +65,13 @@
                                 <label for="address"> New Address </label>
                             </div>
                         </div>
-
                     </div>
                     <div class="card-action">
                         <button class="waves-effect waves-light btn">Change Address</button>
                     </div>
                 </form>
             </div>
+                            
                 
             <div class="col l6">
                 <form id="change_pass" onsubmit="return changePass()" class="card hoverable">
@@ -104,7 +105,7 @@
 
         <div class="divider"></div>
         
-        <div class="row">
+        <div class="container">
             <div class="col l6 grey lighten-4">
                 <h3 class="center-align"> Order History </h3>
                 <div class="row">
@@ -124,10 +125,6 @@
                         </div>
                     </c:forEach>
                 </div>
-            </div>
-            
-            <div class="col l6">
-                <h3 class="center-align"> Books Donated </h3>
             </div>
         </div>
 
@@ -170,42 +167,20 @@
                     url: "serve_changeadd",
                     data: addressForm.serializeArray(),
                     success: data => {
-                        alert(data.message);
-                        window.location.reload(true);
-                    },
-                    error: err => {
-                        alert("There has been an error.");
-                        console.log(err);
-                    }
-                });
-                return false;
-            }
-
-            const submitFeedback = (x, id) => {
-                $.ajax({
-                    type: "POST",
-                    url: "serve_feedback",
-                    data: {
-                        feedback: x[0].value,
-                        order: id
-                    },
-                    success: data => {
-                        alert(data.message);
-                        window.location.reload(true);
                         M.toast({
                             html: data.message,
-                            completeCallback: function () {
-                                if (data.status < 1)
+                            displayLength: 1500,
+                            completeCallback: function() {
+                                if(data.status === 1)
                                     window.location.reload(true);
                             }
-                        })
+                        });     
                     },
                     error: err => {
                         M.toast({html: "There has been an error."});
                         console.log(err);
                     }
                 });
-                console.log(x[0].value);
                 return false;
             }
         </script>

@@ -35,7 +35,7 @@
                     <div class="collection with-header">
                         <h4 class="collection-header">${book.value.name}</h4>
                         <c:forEach items="${book.value.data}" var="data">
-                            <a href="data.jsp?id=${data.key}" class="collection-item"> ${data.value.name}</a>
+                            <a href="book.jsp?id=${data.key}" class="collection-item"> ${data.value.name}</a>
                         </c:forEach>
                     </div>
                 </div>
