@@ -100,13 +100,14 @@ public class Database {
     public JSONObject getGenresWithBooks() {
         JSONObject obj = new JSONObject();
         try (Connection conn = connectSql()) {
-            PreparedStatement stmt = conn.prepareStatement("select books.id, genres.id, books.name, genres.name, cost from books join genres on(genres.id = genre) where stock > 0 and display = 1 order by genre");
+            PreparedStatement stmt = conn.prepareStatement("select books.id, genres.id, books.name, genres.name, cost, owner from books join genres on(genres.id = genre) where stock > 0 and display = 1 order by genre");
             ResultSet res = stmt.executeQuery();
 
             while (res.next()) {
                 JSONObject book = new JSONObject();
                 book.put("name", Helper.capitalizeWord(res.getString(3)));
                 book.put("cost", res.getInt(5));
+                book.put("secondhand", res.getInt(6) != 0);
 
                 int genreID = res.getInt(2);
 
@@ -261,6 +262,22 @@ public class Database {
             CallableStatement stmt = conn.prepareCall("call change_password(?,?)");
             stmt.setInt(1, customer_id);
             stmt.setString(2, password);
+            stmt.execute();
+            conn.close();
+            status = true;
+
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+    
+    Boolean changeAddress(int customer_id, String address) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("call change_address(?,?)");
+            stmt.setInt(1, customer_id);
+            stmt.setString(2, address);
             stmt.execute();
             conn.close();
             status = true;
