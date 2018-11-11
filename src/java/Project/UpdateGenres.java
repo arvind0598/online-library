@@ -19,8 +19,8 @@ import org.json.simple.JSONObject;
  *
  * @author ARVINDS-160953104
  */
-@WebServlet(name = "Login", urlPatterns = {"/serve_login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "UpdateGenres", urlPatterns = {"/serve_modgenres"})
+public class UpdateGenres extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -53,27 +53,17 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        HttpSession sess = request.getSession();
 
-        String useremail = request.getParameter("useremail");
-        String password = request.getParameter("password");
-        String admin = request.getParameter("admin");
-        Boolean isAdmin = admin != null && admin.equals("1");
+        String category = request.getParameter("genre");
+        String temp_admin_id = sess.getAttribute("admlogin") == null ? "" : sess.getAttribute("admlogin").toString();
+        String type = request.getParameter("type");
 
-        JSONObject obj = processRequest(useremail.trim(), password, isAdmin);
+        JSONObject obj = processRequest(category, temp_admin_id, type);
 
         try (PrintWriter out = response.getWriter()) {
-            HttpSession sess = request.getSession();
             out.println(obj);
             out.close();
-
-            int status = Integer.parseInt(obj.get("status").toString());
-
-            if (status == -1) {
-                sess.invalidate();
-            } else {
-                if(isAdmin) sess.setAttribute("admlogin", status);
-                else sess.setAttribute("login", status);
-            }
         }
     }
 
@@ -84,33 +74,52 @@ public class Login extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "just a test login processor";
+        return "adds a category";
     }// </editor-fold>
 
-    public JSONObject processRequest(String useremail, String password, Boolean isAdmin) {
-
-        Boolean useremail_correct = Helper.regexChecker(Helper.Regex.EMAIL, useremail);
-        Boolean password_correct = Helper.regexChecker(Helper.Regex.SIX_TO_TWELVE, password);
+    public JSONObject processRequest(String category, String temp_admin_id, String type_str) {
+        Boolean type_valid = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, type_str);
+        Boolean admin_id_valid = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_admin_id);
+        Boolean category_correct = false;
 
         JSONObject obj = new JSONObject();
 
-        if (!useremail_correct || !password_correct) {
+        if (!admin_id_valid) {
+            obj.put("status", -1);
+            obj.put("message", "Login to continue.");
+            return obj;
+        }
+        
+        if(!type_valid) {
+            obj.put("status", -1);
+            obj.put("message", "Invalid request");
+            return obj;
+        }
+        
+        int type = Integer.parseInt(type_str);
+        category_correct = type == 0 ? 
+                Helper.regexChecker(Helper.Regex.MIN_FOUR_ALPHA_ONLY, category) :  Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, category);
+
+        if (!category_correct) {
             obj.put("status", -1);
             obj.put("message", "Input provided was not valid.");
             return obj;
         }
-        
-        int status = 0;
 
-        if(isAdmin) {
-            status = new Database().checkAdmin(useremail, password);
+        int admin_id = Integer.parseInt(temp_admin_id);
+        Boolean status = false;
+        
+        if(type == 0) {
+            status = new Database().addGenre(category.trim(), admin_id);
         }
         else {
-            status = new Database().checkCustomer(useremail, password, false);
+            int category_id = Integer.parseInt(category);
+            status = new Database().removeGenre(category_id, admin_id);
         }
 
-        obj.put("status", status);
-        obj.put("message", (status > 0) ? "Login successful" : "Login unsuccesful");
+        obj.put("status", status ? 1 : 0);
+        obj.put("message", status ? "Successfully modified" : "Internal error.");
         return obj;
     }
+
 }

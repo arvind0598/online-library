@@ -19,8 +19,8 @@ import org.json.simple.JSONObject;
  *
  * @author ARVINDS-160953104
  */
-@WebServlet(name = "Login", urlPatterns = {"/serve_login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "ChangeAddress", urlPatterns = {"/serve_changeadd"})
+public class ChangeAddress extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -53,28 +53,15 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        HttpSession sess = request.getSession();        
+        Integer userid = (Integer)sess.getAttribute("login");
+        String address = request.getParameter("address");
 
-        String useremail = request.getParameter("useremail");
-        String password = request.getParameter("password");
-        String admin = request.getParameter("admin");
-        Boolean isAdmin = admin != null && admin.equals("1");
-
-        JSONObject obj = processRequest(useremail.trim(), password, isAdmin);
-
+        JSONObject obj = processRequest(userid, address);
         try (PrintWriter out = response.getWriter()) {
-            HttpSession sess = request.getSession();
             out.println(obj);
-            out.close();
-
-            int status = Integer.parseInt(obj.get("status").toString());
-
-            if (status == -1) {
-                sess.invalidate();
-            } else {
-                if(isAdmin) sess.setAttribute("admlogin", status);
-                else sess.setAttribute("login", status);
-            }
-        }
+            out.close();                
+        }      
     }
 
     /**
@@ -84,33 +71,31 @@ public class Login extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "just a test login processor";
+        return "servlet changes address for a user";
     }// </editor-fold>
-
-    public JSONObject processRequest(String useremail, String password, Boolean isAdmin) {
-
-        Boolean useremail_correct = Helper.regexChecker(Helper.Regex.EMAIL, useremail);
-        Boolean password_correct = Helper.regexChecker(Helper.Regex.SIX_TO_TWELVE, password);
-
+    
+    public JSONObject processRequest(int userid, String address) {
+        
         JSONObject obj = new JSONObject();
-
-        if (!useremail_correct || !password_correct) {
+        
+        if(userid < 1) {
             obj.put("status", -1);
-            obj.put("message", "Input provided was not valid.");
+            obj.put("message", "Please login again to continue.");                          
             return obj;
         }
         
-        int status = 0;
-
-        if(isAdmin) {
-            status = new Database().checkAdmin(useremail, password);
+        Boolean address_correct = true;
+        
+        if(!address_correct) {
+            obj.put("status", -1);
+            obj.put("message", "Input provided was not valid.");
         }
-        else {
-            status = new Database().checkCustomer(useremail, password, false);
-        }
-
-        obj.put("status", status);
-        obj.put("message", (status > 0) ? "Login successful" : "Login unsuccesful");
+        
+        Boolean status = new Database().changeAddress(userid, address);
+        
+        obj.put("status", status ? 1 : 0);
+        obj.put("message", status ? "Succesfully changed Address" : "There was an error.");
         return obj;
     }
+
 }

@@ -1,0 +1,21 @@
+<%-- any content can be specified here e.g.: --%>
+<%@taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ page pageEncoding="UTF-8" %>
+
+<div class="navbar-fixed">
+    <nav class="light-blue darken-4">
+        <div class="nav-wrapper">
+            <c:choose>
+                <c:when test="${sessionScope.admlogin ge 0}">
+                    <a href="landing.jsp" class="brand-logo">&nbsp;Online Library</a>
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a href="../serve_logout"> Sign Out </a></li>
+                    </ul>
+                </c:when>
+                <c:otherwise>
+                    <a href="index.jsp" class="brand-logo">&nbsp;Online Library</a>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </nav>
+</div>
