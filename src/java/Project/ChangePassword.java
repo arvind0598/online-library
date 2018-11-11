@@ -19,8 +19,8 @@ import org.json.simple.JSONObject;
  *
  * @author ARVINDS-160953104
  */
-@WebServlet(name = "Login", urlPatterns = {"/serve_login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "ChangePassword", urlPatterns = {"/serve_changepass"})
+public class ChangePassword extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -53,25 +53,19 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-
-        String useremail = request.getParameter("useremail");
-        String password = request.getParameter("password");
-
-        JSONObject obj = processRequest(useremail.trim(), password);
-
+        HttpSession sess = request.getSession();
+        
+        
+        String useremail = ((JSONObject)sess.getAttribute("details")).get("email").toString();
+        String currPassword = request.getParameter("curr_pass");
+        String newPassword = request.getParameter("new_pass");
+        
+        JSONObject obj = processRequest(useremail, currPassword, newPassword);     
+        
         try (PrintWriter out = response.getWriter()) {
-            HttpSession sess = request.getSession();
             out.println(obj);
-            out.close();
-
-            int status = Integer.parseInt(obj.get("status").toString());
-
-            if (status == -1) {
-                sess.invalidate();
-            } else {
-                sess.setAttribute("login", status);
-            }
-        }
+            out.close();                
+        } 
     }
 
     /**
@@ -81,26 +75,35 @@ public class Login extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "just a test login processor";
+        return "servlet changes password for a user";
     }// </editor-fold>
+    
+    public JSONObject processRequest(String userEmail, String currPass, String newPass) {
 
-    public JSONObject processRequest(String useremail, String password) {
-
-        Boolean useremail_correct = Helper.regexChecker(Helper.Regex.EMAIL, useremail);
-        Boolean password_correct = Helper.regexChecker(Helper.Regex.SIX_TO_TWELVE, password);
+        Boolean useremail_correct = Helper.regexChecker(Helper.Regex.EMAIL, userEmail);
+        Boolean curr_password_correct = Helper.regexChecker(Helper.Regex.SIX_TO_TWELVE, currPass);
+        Boolean new_password_correct = Helper.regexChecker(Helper.Regex.SIX_TO_TWELVE, newPass);
 
         JSONObject obj = new JSONObject();
-
-        if (!useremail_correct || !password_correct) {
+        Database x = new Database();
+        
+        if(!useremail_correct || !curr_password_correct || !new_password_correct) {
             obj.put("status", -1);
-            obj.put("message", "Input provided was not valid.");
+            obj.put("message", "Input provided was not valid.");  
             return obj;
         }
+        
+        int user = x.checkCustomer(userEmail, currPass, true);
 
-        int status = new Database().checkCustomer(useremail, password, false);
-
-        obj.put("status", status);
-        obj.put("message", (status > 0) ? "Login successful" : "Login unsuccesful");
+        if (user <= 0) {
+            obj.put("status", 0);
+            obj.put("message", "Current password does not match.");         
+            return obj;
+        }
+        
+        Boolean status = x.changePassword(user, newPass);
+        obj.put("status", status ? 1 : 0);
+        obj.put("message", status ? "Successfully changed password" : "Unable to change password.");
         return obj;
     }
 }

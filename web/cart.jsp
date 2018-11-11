@@ -131,7 +131,7 @@
                     <c:otherwise>
                         M.toast({
                             html:"Please enter address",
-                            displayLength: 2000,
+                            displayLength: 1500,
                             completeCallback: function() {
                                 window.location.href = "profile.jsp";
                             }

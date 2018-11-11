@@ -30,13 +30,14 @@ public class Database {
         return conn;
     }
 
-    int checkCustomer(String email, String password) {
+    int checkCustomer(String email, String password, Boolean internal) {
         int status = -1;
         try (Connection conn = connectSql()) {
-            CallableStatement stmt = conn.prepareCall("begin ? := check_customer(?,?); end;");
+            CallableStatement stmt = conn.prepareCall("begin ? := check_customer(?,?,?); end;");
             stmt.registerOutParameter(1, Types.INTEGER);
             stmt.setString(2, email);
             stmt.setString(3, password);
+            stmt.setInt(4, internal ? 1 : 0);
             stmt.execute();
             status = stmt.getInt(1);
 
@@ -222,6 +223,45 @@ public class Database {
             stmt.setInt(1, customer_id);
             stmt.setInt(2, book_id);
             stmt.setInt(3, qty);
+            stmt.execute();
+            conn.close();
+            status = true;
+
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+    
+    public JSONObject getOrderHistory(int customer_id) {
+        JSONObject obj = new JSONObject();
+         try (Connection conn = connectSql()) {
+            PreparedStatement stmt = conn.prepareStatement("select id, bill, status from orders where cust_id = ?");
+            stmt.setInt(1, customer_id);
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                JSONObject item = new JSONObject();
+                int order_id = res.getInt(1);
+                item.put("bill", res.getInt(2));
+                item.put("status", res.getInt(3));
+                obj.put(order_id, item);
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+
+        return obj;
+    }
+    
+    Boolean changePassword(int customer_id, String password) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("call change_password(?,?)");
+            stmt.setInt(1, customer_id);
+            stmt.setString(2, password);
             stmt.execute();
             conn.close();
             status = true;
