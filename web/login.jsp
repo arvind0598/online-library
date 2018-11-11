@@ -48,26 +48,26 @@
         <div class="slider">
             <ul class="slides">
                 <li>
-                    <img src="https://static1.squarespace.com/static/537c12a7e4b0ca838c2ee48d/564c0158e4b06f49e6635c6a/5652add8e4b02e2458acf0d1/1460365453183/Gateway_1200+Blur.jpg?format=2500w"> <!-- random image -->
+                    <img src="images/librarybooks.png"> 
                     <div class="caption center-align">
-                        <h3>WELCOME TO S MART</h3>
-                        <h5 class="light grey-text text-lighten-3">Quality Products Just Few Clicks Away</h5>
+                        <h3>WELCOME TO PUSTAKAALAY</h3>
+                        <h5 class="light grey-text text-lighten-3">For The Love Of Books</h5>
                     </div>
                 </li>
                 <li>
-                    <img src="https://s20998.pcdn.co/wp-content/uploads/2017/08/IMG_0003.jpg">
+                    <img src="images/genre.jpg">
                     <div class="caption left-align">
-                        <h3>Choose From A Variety Of Products</h3>
+                        <h3>Choose Books From A Variety Of Genres</h3>
                     </div>
                 </li>
                 <li>
-                    <img src="https://cdn.forbesmiddleeast.com/en/wp-content/uploads/sites/3/2017/04/shutterstock_521741356-1635x1091.jpg"> <!-- random image -->
+                    <img src="images/donate3.jpg"> 
                     <div class="caption right-align">
-                        <h3>At Best Prices</h3>
+                        <h3>Donate Your Books</h3>
                     </div>
                 </li>
                 <li>
-                    <img src="https://static1.squarespace.com/static/537c12a7e4b0ca838c2ee48d/564c0158e4b06f49e6635c6a/5652add8e4b02e2458acf0d1/1460365453183/Gateway_1200+Blur.jpg?format=2500w"> <!-- random image -->
+                    <img src="images/librarybooks.png"> 
                     <div class="caption center-align">
                         <h3>Go Get Some!</h3>
                     </div>
@@ -82,7 +82,9 @@
         <script>
             let form = $("#login");
 
-            $('.slider').slider();
+            $(document).ready(function () {
+                $('.slider').slider();
+            });
 
             form.on("submit", event => {
                 event.preventDefault();

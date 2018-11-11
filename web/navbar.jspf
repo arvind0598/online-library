@@ -3,9 +3,9 @@
 <%@ page pageEncoding="UTF-8" %>
 
 <div class="navbar-fixed">
-    <nav class="light-blue darken-4">
+    <nav class="red lighten-1">
         <div class="nav-wrapper">
-            <a href="index.jsp" class="brand-logo">&nbsp;Online Library</a>
+            <a href="index.jsp" class="brand-logo">&nbsp;Pustakaalay</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li>
                     <form action="search.jsp" method="GET">

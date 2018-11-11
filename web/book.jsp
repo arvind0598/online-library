@@ -40,8 +40,49 @@
     </head>
     <body>
         <%@ include file="navbar.jspf"%>
-        <%=product.toString()%>
-        <%=inCart%>
+        <%--<%=product.toString()%>
+        <%=inCart%> --%>
+        <div class="container">
+            <div class="col s12 m7">
+                <h4 class="header">Product Details</h4>
+                <div class="card horizontal hoverable">
+                    <div class="card-image">
+                        <img src="images/books.jpg">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <span class="card-title">${book.name}</span>
+                            <h6>Cost: Rs. ${book.cost}</h6>
+                            <h6>Genre: ${book.genre}</h6>
+                            <h6>Details: ${book.details}</h6>
+                            <c:choose>
+                                <c:when test="${book.secondhand eq false}">
+                                    <h6>Type: New</h6>
+                                </c:when>
+                                <c:otherwise>
+                                    <h6>Type: Second Hand</h6>
+                                </c:otherwise>
+                            </c:choose> 
+                        </div>
+                        <div class="card-action">
+                            <c:if test="${sessionScope.login ne null}">
+                                <c:choose>
+                                    <c:when test="${in_cart eq false}">
+                                        <a href="#">Add To Cart</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="#">View Cart</a>
+                                    </c:otherwise>
+                                </c:choose>            
+                            </c:if>
+                            <c:if test="${sessionScope.login eq null}">
+                                <p> Login to add items to your cart </p>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="js/materialize.min.js"></script>
 
