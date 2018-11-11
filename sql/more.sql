@@ -91,6 +91,8 @@ begin
 		insert into externallogs(email, action) values(email_x, 'ADM_LOGIN_FAILURE');
 	end if;
 	return status;
+exception
+	when others then return 0;
 end;
 
 /

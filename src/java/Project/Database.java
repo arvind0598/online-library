@@ -47,6 +47,23 @@ public class Database {
         }
         return status;
     }
+    
+    int checkAdmin(String email, String password) {
+        int status = -1;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("begin ? := check_admin(?,?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setString(2, email);
+            stmt.setString(3, password);
+            stmt.execute();
+            status = stmt.getInt(1);
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
 
     Boolean registerCustomer(String name, String email, String password) {
         Boolean status = false;
@@ -330,6 +347,38 @@ public class Database {
         }
 
         return obj;
+    }
+    
+    Boolean addGenre(String genre, int admin_id) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("begin ? := add_genre(?,?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setString(2, genre);
+            stmt.setInt(3, admin_id);
+            stmt.execute();
+            status = stmt.getInt(1) == 1;
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+    
+    Boolean removeGenre(int genre, int admin_id) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("begin ? := remove_genre(?,?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setInt(2, genre);
+            stmt.setInt(3, admin_id);
+            stmt.execute();
+            status = stmt.getInt(1) == 1;
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
     }
 }
 
