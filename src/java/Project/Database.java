@@ -105,7 +105,6 @@ public class Database {
 
             while (res.next()) {
                 JSONObject book = new JSONObject();
-                book.put("id", res.getInt(1));
                 book.put("name", res.getString(3));
                 book.put("cost", res.getInt(5));
 
@@ -114,11 +113,11 @@ public class Database {
                 if (!obj.containsKey(genreID)) {
                     JSONObject genre = new JSONObject();
                     genre.put("name", res.getString(4));
-                    genre.put("data", new JSONArray());
+                    genre.put("data", new JSONObject());
                     obj.put(res.getInt(2), genre);
                 }
 
-                ((JSONArray) ((JSONObject) obj.get(genreID)).get("data")).add(book);
+                ((JSONObject)((JSONObject) obj.get(genreID)).get("data")).put(res.getInt(1), book);
             }
 
             conn.close();
