@@ -7,3 +7,5 @@ insert into books(name, genre, details, cost, stock) values('more amazing', 2, '
 insert into books(name, genre, details, cost, stock) values('kinda amazing', 3, 'aaaaa adsasd', 220, 10);
 insert into books(name, genre, details, cost, stock) values('ok cool', 2, 'aaaaa adsasd', 421, 50);
 insert into books(name, genre, details, cost, stock) values('death', 3, 'aaaaa adsasd', 300, 60);
+
+execute register_customer('Arvind S', 'arvind0598@gmail.com', 'password');

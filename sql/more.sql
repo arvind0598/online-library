@@ -60,17 +60,21 @@ end;
 -- 
 
 create or replace function check_customer
-	(email_x in varchar, password_x in varchar)
+	(email_x in varchar, password_x in varchar, internal_action in int)
 return int is
 	status int := 0;
 begin
 	select nvl(id, -1) into status from login where email = email_x and password = password_x and admin = 0;
-	if status > 0 then
-		insert into externallogs(email, action) values(email_x, 'CUST_LOGIN_SUCCESS');
-	else
-		insert into externallogs(email, action) values(email_x, 'CUST_LOGIN_FAILURE');
+	if internal_action = 1 then
+		if status > 0 then
+			insert into externallogs(email, action) values(email_x, 'CUST_LOGIN_SUCCESS');
+		else
+			insert into externallogs(email, action) values(email_x, 'CUST_LOGIN_FAILURE');
+		end if;
 	end if;
 	return status;
+exception
+	when others then return 0;
 end;
 
 /
@@ -322,6 +326,25 @@ is
 begin
 	update books set display = 1 where id = book_id_x;
 	insert into internallogs(login, action, details) values(adm_x, 'APPROVE_BOOK', book_id_x);
+end;
+
+/
+
+create or replace procedure modify_del_status
+	(order_id_x in int, del_x in int, adm_x in int)
+is
+	del_status varchar(20);
+begin
+	update orders set status = del_x where id = order_id_x;
+	if del_x = 1 then
+		del_status := 'DISPATCHED ' || order_id_x;
+	elsif del_x = 2 then
+		del_status := 'DELIVERED ' || order_id_x;
+	else
+		del_status := 'RECIEVED ' || order_id_x;
+	end if;
+
+	insert into internallogs(login, action, details) values(adm_x, 'CHANGE_DEL_STATUS', del_status);
 end;
 
 /

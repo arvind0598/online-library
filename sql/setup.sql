@@ -14,7 +14,7 @@ create table login(
 	email varchar(50) not null unique,
 	password varchar(50) not null,
 	admin int default 0 not null,
-	name varchar(30),
+	name varchar(30) not null,
 	address varchar(100),
 	registered_time timestamp default current_timestamp not null
 );
@@ -51,6 +51,7 @@ create table orders(
 	id int primary key,
 	cust_id int references login(id) on delete cascade,
 	bill int not null,
+	status int default 0 not null,
 	init_time timestamp default current_timestamp not null
 );
 
