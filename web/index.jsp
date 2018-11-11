@@ -12,12 +12,14 @@
     JSONObject genres = new Project.Database().getGenres();
     request.setAttribute("genres", genres);
     session.setAttribute("currentpage", "index.jsp");
+    
+    JSONObject books = new Project.Database().getGenresWithBooks();
 %>
 
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Genres</title>
+        <title>Home</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -39,7 +41,7 @@
                 <div class="col m4">
                     <div class="card small hoverable">
                         <div class="card-image">
-                            <img src="https://www.franchiseindia.com/uploads/content/ri/art/lodi-the-garden-restaurant-start-60f6b1bb83.jpg">
+                            <!--<img src="https://www.franchiseindia.com/uploads/content/ri/art/lodi-the-garden-restaurant-start-60f6b1bb83.jpg">-->
                         </div>
                         <div class="card-content">
                             <span class="card-title">Fast Home Delivery</span>
@@ -50,7 +52,7 @@
                 <div class="col m4">
                     <div class="card small hoverable">
                         <div class="card-image">
-                            <img src="http://www.dorusomcutean.com/wp-content/uploads/2017/06/Best-deals-simcard.jpg">
+                            <!--<img src="http://www.dorusomcutean.com/wp-content/uploads/2017/06/Best-deals-simcard.jpg">-->
                         </div>
                         <div class="card-content">
                             <span class="card-title">Best Prices And Deals</span>
@@ -61,7 +63,7 @@
                 <div class="col m4">
                     <div class="card small hoverable">
                         <div class="card-image">
-                            <img src="https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2016/03/shutterstock_242438494-1200x676.jpg">
+                            <!--<img src="https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2016/03/shutterstock_242438494-1200x676.jpg">-->
                         </div>
                         <div class="card-content">
                             <span class="card-title">You Speak, We Listen!</span>
@@ -72,7 +74,7 @@
                 <div class="col m4">
                     <div class="card small hoverable">
                         <div class="card-image">
-                            <img src="https://cmkt-image-prd.global.ssl.fastly.net/0.1.0/ps/386453/1160/772/m1/fpnw/wm1/gurza_01128-.jpg?1425456055&s=3bd789947477aac05f7d9aa57284933b">
+                            <!--<img src="https://cmkt-image-prd.global.ssl.fastly.net/0.1.0/ps/386453/1160/772/m1/fpnw/wm1/gurza_01128-.jpg?1425456055&s=3bd789947477aac05f7d9aa57284933b">-->
                         </div>
                         <div class="card-content">
                             <span class="card-title">Wide Product Range</span>
@@ -83,7 +85,7 @@
                 <div class="col m4">
                     <div class="card small hoverable">
                         <div class="card-image">
-                            <img src="http://bpic.588ku.com//element_origin_min_pic/17/09/02/c525ae37b545af5615d778937d99409c.jpg">
+                            <!--<img src="http://bpic.588ku.com//element_origin_min_pic/17/09/02/c525ae37b545af5615d778937d99409c.jpg">-->
                         </div>
                         <div class="card-content">
                             <span class="card-title">Easy Payments</span>
@@ -94,7 +96,7 @@
                 <div class="col m4">
                     <div class="card small hoverable">
                         <div class="card-image">
-                            <img src="https://png.pngtree.com/element_origin_min_pic/16/08/18/1757b581c502064.jpg">
+                            <!--<img src="https://png.pngtree.com/element_origin_min_pic/16/08/18/1757b581c502064.jpg">-->
                         </div>
                         <div class="card-content">
                             <span class="card-title">Convenient</span>

@@ -21,10 +21,11 @@
                         <li><a href="cart.jsp"> Cart </a></li>
                         <li><a href="profile.jsp"> My Profile </a></li>
                         <li><a href="signout"> Sign Out </a></li>
+                        <li><a href="donate.jsp"> Donate </a></li>
                     </c:when>
                     <c:otherwise>
-                        <li><a href="login_page.jsp"> Sign In </a></li>
-                        <li><a href="register_page.jsp"> Register </a></li>
+                        <li><a href="login.jsp"> Sign In </a></li>
+                        <li><a href="register.jsp"> Register </a></li>
                     </c:otherwise>
                 </c:choose>
             </ul>
