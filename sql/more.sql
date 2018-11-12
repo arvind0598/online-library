@@ -288,10 +288,17 @@ end;
 /
 
 create or replace function add_firsthand_book
+	(name_x in varchar, author_x in varchar, genre_id_x in int, details_x in varchar, cost_x in int, stock_x in int, adm_x in int)
 return int
 is
+	book_x varchar(50);
 begin
+	insert into books(name, author, genre, details, cost, stock) values(name_x, author_x, genre_id_x, details_x, cost_x, stock_x);
+	select name into book_x from books where id = (select max(id) from books);
+	insert into internallogs(login, action, details) values(adm_x, 'ADD_FIRSTHAND', book_x);
 	return 1;
+exception
+	when others then return 0;
 end;
 
 /

@@ -14,7 +14,6 @@ import java.net.URL;
 import java.sql.*;
 import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -517,6 +516,30 @@ public class Database {
         } catch (Exception e) {
             Helper.handleError(e);
         }
+        return status;
+    }
+
+    Boolean addFirstHand(JSONObject product, int admin_id, int cat_id) {
+        Boolean status = false;
+        try {
+            Connection conn = connectSql();
+            CallableStatement stmt = conn.prepareCall("begin ? := add_firsthand_book(?,?,?,?,?,?,?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setString(2, product.get("name").toString());
+            stmt.setString(3, product.get("author").toString());
+            stmt.setInt(4, cat_id);
+            stmt.setString(5, product.get("desc").toString());
+            stmt.setInt(6, Integer.parseInt(product.get("cost").toString()));
+            stmt.setInt(7, Integer.parseInt(product.get("stock").toString()));
+            stmt.setInt(8, admin_id);
+            stmt.execute();
+            status = stmt.getInt(1) == 1;
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+            status = false;
+        }
+
         return status;
     }
 }

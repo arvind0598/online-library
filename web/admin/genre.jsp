@@ -94,7 +94,7 @@
         <footer class="page-footer grey lighten-5">
             <div class="container">
                 <div class="row center-align">
-                    <a href="newproduct.jsp?cat_id=${param.id}"> Click here to add a new book to ${name} </a>
+                    <a href="newbook.jsp?cat_id=${param.id}"> Click here to add a new book to ${name} </a>
                 </div>
             </div>
         </footer>
