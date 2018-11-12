@@ -19,9 +19,9 @@ import org.json.simple.JSONObject;
  *
  * @author ARVINDS-160953104
  */
-@WebServlet(name = "UpdateGenres", urlPatterns = {"/serve_modgenres"})
-public class UpdateGenres extends HttpServlet {
-
+@WebServlet(name = "ModifyStock", urlPatterns = {"/serve_modstock"})
+public class ModifyStock extends HttpServlet {
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -54,12 +54,12 @@ public class UpdateGenres extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         HttpSession sess = request.getSession();
+        
+        String temp_admin_id = sess.getAttribute("admlogin") == null ? "-1" : sess.getAttribute("admlogin").toString();
+        String temp_value = request.getParameter("value");
+        String temp_id = request.getParameter("id");
 
-        String category = request.getParameter("genre");
-        String temp_admin_id = sess.getAttribute("admlogin") == null ? "" : sess.getAttribute("admlogin").toString();
-        String type = request.getParameter("type");
-
-        JSONObject obj = processRequest(category, temp_admin_id, type);
+        JSONObject obj = processRequest(temp_admin_id, temp_id, temp_value);
 
         try (PrintWriter out = response.getWriter()) {
             out.println(obj);
@@ -74,51 +74,37 @@ public class UpdateGenres extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "adds a category";
+        return "updates offers or stocks for a given product";
     }// </editor-fold>
 
-    public JSONObject processRequest(String category, String temp_admin_id, String type_str) {
-        Boolean type_valid = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, type_str);
-        Boolean admin_id_valid = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_admin_id);
-        Boolean category_correct = false;
+    public JSONObject processRequest(String temp_admin_id, String temp_book_id, String temp_stock) {
+
+        Boolean admin_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_admin_id);
+        Boolean value_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_stock);
+        Boolean id_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_book_id);
 
         JSONObject obj = new JSONObject();
 
-        if (!admin_id_valid) {
+        if (!admin_ok) {
             obj.put("status", -1);
             obj.put("message", "Login to continue.");
             return obj;
-        }
+        } 
         
-        if(!type_valid) {
-            obj.put("status", -1);
-            obj.put("message", "Invalid request");
-            return obj;
-        }
-        
-        int type = Integer.parseInt(type_str);
-        category_correct = type == 0 ? 
-                Helper.regexChecker(Helper.Regex.MIN_SIX_ALPHA_SPACES, category) :  Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, category);
-
-        if (!category_correct) {
+        else if (!value_ok || !id_ok) {
             obj.put("status", -1);
             obj.put("message", "Input provided was not valid.");
             return obj;
         }
 
+        int book_id = Integer.parseInt(temp_book_id);
+        int value = Integer.parseInt(temp_stock);
         int admin_id = Integer.parseInt(temp_admin_id);
-        Boolean status = false;
-        
-        if(type == 0) {
-            status = new Database().addGenre(category.trim(), admin_id);
-        }
-        else {
-            int category_id = Integer.parseInt(category);
-            status = new Database().removeGenre(category_id, admin_id);
-        }
+
+        Boolean status = new Database().updateStock(book_id, value, admin_id);
 
         obj.put("status", status ? 1 : 0);
-        obj.put("message", status ? "Successfully modified" : "Internal error.");
+        obj.put("message", status ? "Succesfully updated." : "Unable to update stock.");
         return obj;
     }
 

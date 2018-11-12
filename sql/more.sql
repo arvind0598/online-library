@@ -223,6 +223,8 @@ begin
 		status := 1;
 	end if;
 	return status;
+exception
+	when others then return 0;
 end;
 
 /

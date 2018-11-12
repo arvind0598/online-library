@@ -19,8 +19,8 @@ import org.json.simple.JSONObject;
  *
  * @author ARVINDS-160953104
  */
-@WebServlet(name = "UpdateGenres", urlPatterns = {"/serve_modgenres"})
-public class UpdateGenres extends HttpServlet {
+@WebServlet(name = "DeliveryStatus", urlPatterns = {"/serve_delivery"})
+public class DeliveryStatus extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -54,17 +54,51 @@ public class UpdateGenres extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         HttpSession sess = request.getSession();
+        JSONObject obj = new JSONObject(); 
 
-        String category = request.getParameter("genre");
-        String temp_admin_id = sess.getAttribute("admlogin") == null ? "" : sess.getAttribute("admlogin").toString();
-        String type = request.getParameter("type");
-
-        JSONObject obj = processRequest(category, temp_admin_id, type);
-
+        String temp_admin_id = sess.getAttribute("admlogin") == null ? "-1" : sess.getAttribute("admlogin").toString();
+        String temp_type = request.getParameter("status");
+        String temp_id = request.getParameter("id");
+        
+        Boolean admin_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_admin_id);
+        Boolean type_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_type);
+        Boolean id_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_id);
+        
+        if(!admin_ok) {
+            try (PrintWriter out = response.getWriter()) {
+                obj.put("status", -1);
+                obj.put("message", "Login to continue.");
+                out.println(obj);
+                out.close();                
+            }             
+            return;
+        }        
+        
+        else if(!type_ok || !id_ok) {
+            try (PrintWriter out = response.getWriter()) {
+                obj.put("status", -1);
+                obj.put("message", "Input provided was not valid.");
+                out.println(obj);
+                out.close();                
+            }             
+            return;
+        } 
+       
+        int type = Integer.parseInt(temp_type);
+        int order_id = Integer.parseInt(temp_id);
+        int admin_id = Integer.parseInt(temp_admin_id);
+        
+        System.out.println(admin_id);
+        
+        Boolean status = new Database().updateDeliveryStatus(order_id, type, admin_id);
+        obj.put("status", status);
+        obj.put("message", status? "Succesfully updated." : "Could not update status.");
+                          
         try (PrintWriter out = response.getWriter()) {
             out.println(obj);
             out.close();
         }
+                
     }
 
     /**
@@ -74,52 +108,8 @@ public class UpdateGenres extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "adds a category";
+        return "updates the delivery status";
     }// </editor-fold>
 
-    public JSONObject processRequest(String category, String temp_admin_id, String type_str) {
-        Boolean type_valid = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, type_str);
-        Boolean admin_id_valid = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_admin_id);
-        Boolean category_correct = false;
-
-        JSONObject obj = new JSONObject();
-
-        if (!admin_id_valid) {
-            obj.put("status", -1);
-            obj.put("message", "Login to continue.");
-            return obj;
-        }
-        
-        if(!type_valid) {
-            obj.put("status", -1);
-            obj.put("message", "Invalid request");
-            return obj;
-        }
-        
-        int type = Integer.parseInt(type_str);
-        category_correct = type == 0 ? 
-                Helper.regexChecker(Helper.Regex.MIN_SIX_ALPHA_SPACES, category) :  Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, category);
-
-        if (!category_correct) {
-            obj.put("status", -1);
-            obj.put("message", "Input provided was not valid.");
-            return obj;
-        }
-
-        int admin_id = Integer.parseInt(temp_admin_id);
-        Boolean status = false;
-        
-        if(type == 0) {
-            status = new Database().addGenre(category.trim(), admin_id);
-        }
-        else {
-            int category_id = Integer.parseInt(category);
-            status = new Database().removeGenre(category_id, admin_id);
-        }
-
-        obj.put("status", status ? 1 : 0);
-        obj.put("message", status ? "Successfully modified" : "Internal error.");
-        return obj;
-    }
-
 }
+

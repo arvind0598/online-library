@@ -222,7 +222,7 @@ public class Database {
             ResultSet res = stmt.executeQuery();
 
             if (res.next()) {
-                x = res.getString(1);
+                x = Helper.capitalizeWord(res.getString(1));
             }
 
             conn.close();
@@ -390,8 +390,129 @@ public class Database {
             stmt.setInt(2, cust_id);
             stmt.execute();
             status = stmt.getInt(1);
-            System.out.println(status);
             conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+    
+    public JSONObject getBooksPerGenreForAdmin(int genre) {
+        JSONObject obj = new JSONObject();
+        try (Connection conn = connectSql()) {
+            PreparedStatement stmt = conn.prepareStatement("select id, name, cost, stock from books where genre = ?");
+            stmt.setInt(1, genre);
+            ResultSet res = stmt.executeQuery();
+            
+            while (res.next()) {
+                JSONObject x = new JSONObject();
+                x.put("cost", res.getInt(3));
+                x.put("name", Helper.capitalizeWord(res.getString(2)));
+                x.put("stock", res.getInt(4));
+                obj.put(res.getInt(1), x);
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+
+        return obj;
+    }
+    
+    Boolean updateStock(int book_id, int stock, int admin_id) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("begin ? := update_stock(?,?,?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setInt(2, book_id);
+            stmt.setInt(3, stock);
+            stmt.setInt(4, admin_id);
+            stmt.execute();
+            status = stmt.getInt(1) == 1;
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+    
+    Boolean removeBook(int book_id, int admin_id){
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("begin ? := remove_book(?,?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setInt(2, book_id);
+            stmt.setInt(3, admin_id);
+            stmt.execute();
+            status = stmt.getInt(1) == 1;
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
+    
+    public JSONObject getActiveOrders() {
+        JSONObject x = new JSONObject();
+        try {
+            Connection conn = connectSql();
+            PreparedStatement stmt = conn.prepareStatement("select id, (select name from login where id = orders.cust_id), bill, status, init_time from orders where status <> 2");
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                JSONObject item = new JSONObject();
+                int order_id = res.getInt(1);
+                JSONObject orderItems = getOrderItems(order_id);
+                item.put("name", res.getString(2));
+                item.put("bill", res.getInt(3));
+                item.put("status", res.getInt(4));
+                item.put("items", orderItems);
+                item.put("time", res.getString(5));
+                x.put(order_id, item);
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+
+        return x;
+    }
+    
+    public JSONObject getOrderItems(int order_id) {
+        JSONObject obj = new JSONObject();
+        try {
+            Connection conn = connectSql();
+            PreparedStatement stmt = conn.prepareStatement("select id, name, qty, stock from orderitems join books on(book_id = id) where order_id = ?");
+            stmt.setInt(1, order_id);
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                JSONObject x = new JSONObject();
+                x.put("name", res.getString(2));
+                x.put("qty", res.getInt(3));
+                x.put("stock", res.getInt(4));
+                obj.put(res.getInt(1), x);
+            }
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return obj;
+    }
+
+    Boolean updateDeliveryStatus(int order_id, int type, int admin_id) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("call modify_del_status(?,?,?)");
+            stmt.setInt(1, order_id);
+            stmt.setInt(2, type);
+            stmt.setInt(3, admin_id);
+            stmt.execute();
+            conn.close();
+            status = true;
+
         } catch (Exception e) {
             Helper.handleError(e);
         }

@@ -51,7 +51,7 @@
                     <li class="collection-header"> <h4>Genres</h4> </li>
                     <c:forEach items="${categories}" var="cat">
                         <li class="collection-item">
-                            <a href="category.jsp?id=${cat.key}" class="title"> ${cat.value} </a>
+                            <a href="genre.jsp?id=${cat.key}" class="title"> ${cat.value} </a>
                             <a href="javascript:submitData(1, ${cat.key})" class="secondary-content">
                                 <i class="material-icons red-text"> delete </i>
                             </a>
