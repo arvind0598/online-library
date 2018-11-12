@@ -42,6 +42,7 @@
                         <div class="row">
                             <div class="col l6">
                                 <p> Customer Name: ${order.value.name} </p>
+                                <p> Address: ${order.value.address}</p>
                                 <p> Bill Amount: Rs. ${order.value.bill} </p>
                                 <p> Order Time: ${order.value.time}</p>
                             </div>

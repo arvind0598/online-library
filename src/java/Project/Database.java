@@ -457,7 +457,7 @@ public class Database {
         JSONObject x = new JSONObject();
         try {
             Connection conn = connectSql();
-            PreparedStatement stmt = conn.prepareStatement("select id, (select name from login where id = orders.cust_id), bill, status, init_time from orders where status <> 2");
+            PreparedStatement stmt = conn.prepareStatement("select id, (select name from login where id = orders.cust_id), bill, status, init_time, (select address from login where id = orders.cust_id) from orders where status <> 2");
             ResultSet res = stmt.executeQuery();
 
             while (res.next()) {
@@ -469,6 +469,7 @@ public class Database {
                 item.put("status", res.getInt(4));
                 item.put("items", orderItems);
                 item.put("time", res.getString(5));
+                item.put("address", res.getString(6));
                 x.put(order_id, item);
             }
 
