@@ -31,10 +31,10 @@ create table books(
 	author varchar(50) not null,
 	details varchar(200) not null,
 	cost int not null,
-	keywords varchar(200),
+	keywords varchar(200) not null,
 	stock int default 1 not null,
 	owner int default null references login(id) on delete cascade,
-	age real default 0 not null,
+	age int default 0 not null,
 	display int default 1 not null,
 	constraint c_books_pos check(cost > 0 and stock >= 0 and age >= 0)
 );

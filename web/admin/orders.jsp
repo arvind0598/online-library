@@ -4,7 +4,6 @@
     Author     : ARVINDS-160953104
 --%>
 
-
 <%@page import="org.json.simple.JSONObject"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%

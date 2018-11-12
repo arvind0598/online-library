@@ -523,15 +523,16 @@ public class Database {
         Boolean status = false;
         try {
             Connection conn = connectSql();
-            CallableStatement stmt = conn.prepareCall("begin ? := add_firsthand_book(?,?,?,?,?,?,?); end;");
+            CallableStatement stmt = conn.prepareCall("begin ? := add_firsthand_book(?,?,?,?,?,?,?,?); end;");
             stmt.registerOutParameter(1, Types.INTEGER);
             stmt.setString(2, product.get("name").toString());
             stmt.setString(3, product.get("author").toString());
             stmt.setInt(4, cat_id);
             stmt.setString(5, product.get("desc").toString());
-            stmt.setInt(6, Integer.parseInt(product.get("cost").toString()));
-            stmt.setInt(7, Integer.parseInt(product.get("stock").toString()));
-            stmt.setInt(8, admin_id);
+            stmt.setString(6, product.get("keywords").toString());
+            stmt.setInt(7, Integer.parseInt(product.get("cost").toString()));
+            stmt.setInt(8, Integer.parseInt(product.get("stock").toString()));
+            stmt.setInt(9, admin_id);
             stmt.execute();
             status = stmt.getInt(1) == 1;
             conn.close();
@@ -540,6 +541,75 @@ public class Database {
             status = false;
         }
 
+        return status;
+    }
+
+    Boolean addSecondHand(JSONObject product, int customer_id) {
+        Boolean status = false;
+        try {
+            Connection conn = connectSql();
+            CallableStatement stmt = conn.prepareCall("begin ? := add_secondhand_book(?,?,?,?,?,?,?,?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setString(2, product.get("name").toString());
+            stmt.setString(3, product.get("author").toString());
+            stmt.setInt(4, Integer.parseInt(product.get("genre").toString()));
+            stmt.setString(5, product.get("desc").toString());
+            stmt.setString(6, product.get("keywords").toString());
+            stmt.setInt(7, Integer.parseInt(product.get("cost").toString()));
+            stmt.setInt(8, Integer.parseInt(product.get("age").toString()));
+            stmt.setInt(9, customer_id);
+            stmt.execute();
+            status = stmt.getInt(1) == 1;
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+            status = false;
+        }
+
+        return status;
+    }
+    
+    public JSONObject getPendingBooks() {
+        JSONObject x = new JSONObject();
+        try {
+            Connection conn = connectSql();
+            PreparedStatement stmt = conn.prepareStatement("select books.id, genres.name, books.name, details, cost, age, (select name from login where login.id = owner), author from books join genres on(books.genre = genres.id) where stock > 0 and display = 0");
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                JSONObject obj = new JSONObject();
+                int book_id = res.getInt(1);
+                obj.put("genre", Helper.capitalizeWord(res.getString(2)));
+                obj.put("name", Helper.capitalizeWord(res.getString(3)));
+                obj.put("details", res.getString(4));
+                obj.put("cost", res.getInt(5));
+                obj.put("age", res.getInt(6));
+                obj.put("owner", res.getString(7));
+                obj.put("author", Helper.capitalizeWord(res.getString(8)));
+                x.put(book_id, obj);
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+
+        return x;
+    }
+
+    Boolean approveBook(int book_id, int admin_id) {
+        Boolean status = false;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("call approve_secondhand_book(?,?)");
+            stmt.setInt(1, book_id);
+            stmt.setInt(2, admin_id);
+            stmt.execute();
+            conn.close();
+            status = true;
+
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
         return status;
     }
 }

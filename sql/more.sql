@@ -24,6 +24,7 @@ create or replace trigger books_before_insert
 for each row
 begin
 	select nvl(max(id) + 1, 1) into :new.id from books;
+	:new.keywords := :new.keywords || ' ' || :new.author || ' ' || :new.name; 
 end;
 
 /
@@ -157,7 +158,7 @@ return int is
 	stock_x int := 0;
 begin
 	select stock into stock_x from books where id = book_id_x;
-	if stock_x > qty_x then
+	if stock_x >= qty_x then
 		status := 1;
 	end if;
 	return status;
@@ -288,12 +289,12 @@ end;
 /
 
 create or replace function add_firsthand_book
-	(name_x in varchar, author_x in varchar, genre_id_x in int, details_x in varchar, cost_x in int, stock_x in int, adm_x in int)
+	(name_x in varchar, author_x in varchar, genre_id_x in int, details_x in varchar, keywords_x in varchar, cost_x in int, stock_x in int, adm_x in int)
 return int
 is
 	book_x varchar(50);
 begin
-	insert into books(name, author, genre, details, cost, stock) values(name_x, author_x, genre_id_x, details_x, cost_x, stock_x);
+	insert into books(name, author, genre, details, keywords, cost, stock) values(name_x, author_x, genre_id_x, details_x, keywords_x, cost_x, stock_x);
 	select name into book_x from books where id = (select max(id) from books);
 	insert into internallogs(login, action, details) values(adm_x, 'ADD_FIRSTHAND', book_x);
 	return 1;
@@ -304,10 +305,17 @@ end;
 /
 
 create or replace function add_secondhand_book
+	(name_x in varchar, author_x in varchar, genre_id_x in int, details_x in varchar, keywords_x in varchar, cost_x in int, age_x in int, cust_x in int)
 return int
 is
+	book_x varchar(50);
 begin
+	insert into books(name, author, genre, details, keywords, cost, owner, age, display) values(name_x, author_x, genre_id_x, details_x, keywords_x, cost_x, cust_x, age_x, 0);
+	select name into book_x from books where id = (select max(id) from books);
+	insert into internallogs(login, action, details) values(cust_x, 'ADD_SECONDHAND', book_x);
 	return 1;
+exception
+	when others then return 0;
 end;
 
 /
