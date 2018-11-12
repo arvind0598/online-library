@@ -149,7 +149,7 @@ public class Database {
     public JSONObject searchProducts(String str) {
         JSONObject obj = new JSONObject();
         try (Connection conn = connectSql()) {
-            PreparedStatement stmt = conn.prepareStatement("select id, name, cost from books where stock > 0 and display = 1 and keywords like ?");
+            PreparedStatement stmt = conn.prepareStatement("select id, name, cost, author from books where stock > 0 and display = 1 and keywords like ?");
             stmt.setString(1, "%" + str + "%");
             ResultSet res = stmt.executeQuery();
 
@@ -157,6 +157,7 @@ public class Database {
                 JSONObject book = new JSONObject();
                 book.put("name", res.getString(2));
                 book.put("cost", res.getInt(3));
+                book.put("author", res.getString(4));
                 obj.put(res.getInt(1), book);
             }
 
@@ -171,7 +172,7 @@ public class Database {
     public JSONObject getCustomerDetails(int customer_id) {
         JSONObject obj = new JSONObject();
         try (Connection conn = connectSql()) {
-            PreparedStatement stmt = conn.prepareStatement("select email, name, address from login where id = ?");
+            PreparedStatement stmt = conn.prepareStatement("select email, name, address,(select count(*) from books where owner = login.id) from login where id = ?");
             stmt.setInt(1, customer_id);
             ResultSet res = stmt.executeQuery();
 
@@ -179,6 +180,7 @@ public class Database {
                 obj.put("email", res.getString(1));
                 obj.put("name", res.getString(2));
                 obj.put("address", res.getString(3));
+                obj.put("donated", res.getInt(4));
             }
 
             conn.close();
