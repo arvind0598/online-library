@@ -28,6 +28,7 @@ create table books(
 	id int primary key,
 	genre int references genres(id) on delete cascade not null,
 	name varchar(50) not null,
+	author varchar(50) not null,
 	details varchar(200) not null,
 	cost int not null,
 	keywords varchar(200),

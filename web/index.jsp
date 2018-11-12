@@ -32,12 +32,24 @@
         <div class="row">
             <c:forEach items="${books}" var="book">
                 <div class="col m3">
-                    <div class="collection with-header">
-                        <h4 class="collection-header">${book.value.name}</h4>
-                        <c:forEach items="${book.value.data}" var="data">
-                            <a href="book.jsp?id=${data.key}" class="collection-item"> ${data.value.name}: Rs. ${data.value.cost}</a>
+                    <ul class="collection with-header">
+                        <li class="collection-header"><h4>${book.key}</h4></li>
+                            <c:forEach items="${book.value.data}" var="data">
+                                <!--<a href="book.jsp?id=${data.key}" class="collection-item"> ${data.value.name}: </a> Rs. ${data.value.cost}</a>-->
+                            <!--                            <li class="collection item">
+                                                            <a href="book.jsp?id=${data.key}" class="collection-item"> ${data.value.name} </a>
+                                                            <p> Rs. ${data.value.cost} <br> By ${data.value.author} </p>
+                                                        </li>-->
+                            <li class="collection-item avatar">
+                                <i class="material-icons circle">book</i>
+                                <span class="title"> ${data.value.name}</span>
+                                <p>By ${data.value.author} <br>
+                                    Rs. ${data.value.cost}                              
+                                </p>
+                                <a href="book.jsp?id=${data.key}" class="secondary-content"><i class="material-icons">send</i></a>
+                            </li>
                         </c:forEach>
-                    </div>
+                    </ul>
                 </div>
             </c:forEach>
         </div>

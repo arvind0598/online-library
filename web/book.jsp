@@ -40,11 +40,9 @@
     </head>
     <body>
         <%@ include file="navbar.jspf"%>
-        <%--<%=product.toString()%>
-        <%=inCart%> --%>
         <div class="container">
-            <div class="col s12 m7">
-                <h4 class="header">Product Details</h4>
+            <div class="col s12 m7 valign-wrapper">
+                <!--<h4 class="header">Product Details</h4>-->
                 <div class="card horizontal hoverable">
                     <div class="card-image">
                         <img src="images/books.jpg">
@@ -52,6 +50,7 @@
                     <div class="card-stacked">
                         <div class="card-content">
                             <span class="card-title">${book.name}</span>
+                            <h6> Author: ${book.author} </h6>                            
                             <h6>Cost: Rs. ${book.cost}</h6>
                             <h6>Genre: ${book.genre}</h6>
                             <h6>Details: ${book.details}</h6>
@@ -68,10 +67,10 @@
                             <c:if test="${sessionScope.login ne null}">
                                 <c:choose>
                                     <c:when test="${in_cart eq false}">
-                                        <a href="#">Add To Cart</a>
+                                        <a href="javascript:addToCart(${requestScope.book_id})">Add To Cart</a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a href="#">View Cart</a>
+                                        <a href="cart.jsp">View Cart</a>
                                     </c:otherwise>
                                 </c:choose>            
                             </c:if>
@@ -89,9 +88,7 @@
         <script>
             let id = <%=item_id%>;
 
-            $("#add").on("click", event => {
-                event.preventDefault();
-                event.stopPropagation();
+           const addToCart = id => {
                 $.ajax({
                     type: "POST",
                     url: "serve_updatecart",
@@ -101,7 +98,7 @@
                     success: data => {
                         M.toast({
                             html: data.message,
-                            displayLength: 2500,
+                            displayLength: 1500,
                             completeCallback: function () {
                                 window.location.reload(true);
                             }
@@ -114,11 +111,7 @@
                         });
                     }
                 });
-            });
-
-            $("#check").on("click", event => {
-                window.location = "cart.jsp";
-            });
+            }
         </script>
     </body>
 </html>

@@ -117,25 +117,25 @@ public class Database {
     public JSONObject getGenresWithBooks() {
         JSONObject obj = new JSONObject();
         try (Connection conn = connectSql()) {
-            PreparedStatement stmt = conn.prepareStatement("select books.id, genres.id, books.name, genres.name, cost, owner from books join genres on(genres.id = genre) where stock > 0 and display = 1 order by genre");
+            PreparedStatement stmt = conn.prepareStatement("select books.id, books.name, author, genres.name, cost, owner from books join genres on(genres.id = genre) where stock > 0 and display = 1 order by genre");
             ResultSet res = stmt.executeQuery();
 
             while (res.next()) {
                 JSONObject book = new JSONObject();
-                book.put("name", Helper.capitalizeWord(res.getString(3)));
+                book.put("name", Helper.capitalizeWord(res.getString(2)));
+                book.put("author", Helper.capitalizeWord(res.getString(3)));
                 book.put("cost", res.getInt(5));
                 book.put("secondhand", res.getInt(6) != 0);
 
-                int genreID = res.getInt(2);
+                String genreName = Helper.capitalizeWord(res.getString(4));
 
-                if (!obj.containsKey(genreID)) {
+                if (!obj.containsKey(genreName)) {
                     JSONObject genre = new JSONObject();
-                    genre.put("name", Helper.capitalizeWord(res.getString(4)));
                     genre.put("data", new JSONObject());
-                    obj.put(res.getInt(2), genre);
+                    obj.put(genreName, genre);
                 }
 
-                ((JSONObject)((JSONObject) obj.get(genreID)).get("data")).put(res.getInt(1), book);
+                ((JSONObject)((JSONObject) obj.get(genreName)).get("data")).put(res.getInt(1), book);
             }
 
             conn.close();
@@ -328,7 +328,7 @@ public class Database {
         JSONObject obj = new JSONObject();
         try {
             Connection conn = connectSql();
-            PreparedStatement stmt = conn.prepareStatement("select genres.name, books.name, details, cost, age, owner from books join genres on(books.genre = genres.id) where books.id = ? and stock > 0 and display = 1");
+            PreparedStatement stmt = conn.prepareStatement("select genres.name, books.name, details, cost, age, owner, author from books join genres on(books.genre = genres.id) where books.id = ? and stock > 0 and display = 1");
             stmt.setInt(1, book_id);
             ResultSet res = stmt.executeQuery();
 
@@ -339,6 +339,7 @@ public class Database {
                 obj.put("cost", res.getInt(4));
                 obj.put("age", res.getInt(5));
                 obj.put("secondhand", res.getInt(6) != 0);
+                obj.put("author", Helper.capitalizeWord(res.getString(7)));
             }
 
             conn.close();
