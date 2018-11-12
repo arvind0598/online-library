@@ -381,6 +381,22 @@ public class Database {
         }
         return status;
     }
+
+    int checkoutOrder(int cust_id) {
+        int status = -1;
+        try (Connection conn = connectSql()) {
+            CallableStatement stmt = conn.prepareCall("begin ? := make_order(?); end;");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setInt(2, cust_id);
+            stmt.execute();
+            status = stmt.getInt(1);
+            System.out.println(status);
+            conn.close();
+        } catch (Exception e) {
+            Helper.handleError(e);
+        }
+        return status;
+    }
 }
 
 class Helper {
@@ -445,7 +461,7 @@ class Helper {
     public static void sendEmail(String email, int order, String name)
             throws MalformedURLException, IOException {
 
-        String preURL = String.format("https://script.google.com/macros/s/AKfycbwZm6E2OzyHqnjwQAe10TgAobIyH1tmhk3nWpt_E3ahlMIajm8/exec?email=%s&order=%d&name=%s", email, order, name.split(" (?!.* )")[0]);
+        String preURL = String.format("https://script.google.com/macros/s/AKfycbwZm6E2OzyHqnjwQAe10TgAobIyH1tmhk3nWpt_E3ahlMIajm8/exec?email=%s&order=%d&name=%s&type=2", email, order, name.split(" (?!.* )")[0]);
 
         URL url = new URL(preURL);
 

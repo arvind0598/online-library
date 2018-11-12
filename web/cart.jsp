@@ -41,7 +41,7 @@
         <div class="container">
             <table class="responsive-table">
                 <tr>
-                    <th> Product Name </th>
+                    <th> Book Name </th>
                     <th> Cost </th>
                     <th> Quantity </th>
                     <th> Sub Cost </th>

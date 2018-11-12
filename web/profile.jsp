@@ -105,8 +105,7 @@
 
         <div class="divider"></div>
         
-        <div class="container">
-            <div class="col l6 grey lighten-4">
+            <div class="grey lighten-4">
                 <h3 class="center-align"> Order History </h3>
                 <div class="row">
                     <c:forEach items="${orders}" var="ord">
@@ -114,8 +113,8 @@
                         <c:set value="${ord.value.status}" var="status"/>
                         <c:set value="${status eq 0 ? 'Received' : status eq 1 ? 'Dispatched' : 'Delivered'}" var="orderstring"/>
 
-                        <div class="col l6">
-                            <div class="card small hoverable">
+                        <div class="col l4">
+                            <div class="card hoverable">
                                 <div class="card-content">		
                                     <h4> Order #${ord.key} </h4>
                                     <p> <b>Final Amount :</b> Rs.${ord.value.bill} </p>
@@ -126,7 +125,6 @@
                     </c:forEach>
                 </div>
             </div>
-        </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="js/materialize.min.js"></script>

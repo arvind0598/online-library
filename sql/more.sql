@@ -204,7 +204,6 @@ begin
 	if count_x > 0 then
 		insert into orders(cust_id, bill) values(cust_id_x, 0);
 		select max(id) into order_x from orders;
-		order_x := order_x + 1;
 
 		for i in (select book_id, qty from cart where cust_id = cust_id_x and active = 1) loop
 			insert into orderitems values(order_x, i.book_id, i.qty);
@@ -224,8 +223,6 @@ begin
 		status := 1;
 	end if;
 	return status;
-exception
-	when others then return 0;
 end;
 
 /
