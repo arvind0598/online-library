@@ -43,6 +43,7 @@
                         <span class="card-title"> ${details.name} </span>
                         <div>
                             <p> <b>Email:</b> ${details.email} </p>
+                            <p> <b>No. Of Books Donated:</b> ${details.donated eq null ? 0 : details.donated}</p>
                             <c:choose>
                                 <c:when test="${details.address ne null}">
                                     <p> <b>Address:</b> ${details.address} </p>
@@ -51,12 +52,11 @@
                                     <p><b> Please Enter Address to place order. </b></p>
                                 </c:otherwise>
                             </c:choose>
-                            <p> You have donated ${details.donated eq null ? 0 : details.donated} books so far. </p>
                         </div>
                     </div>
                 </div>
                             
-                <form id="change_add" onsubmit=" return changeAddress()" class="card hoverable">
+                <form id="change_add" onsubmit=" return changeAddress()" class="card small hoverable">
                     <div class="card-content">
                         <span class="card-title"> Change Address </span>
                         <div class="row">
