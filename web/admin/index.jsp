@@ -46,7 +46,7 @@
         <div class="slider">
             <ul class="slides">
                 <li>
-                    <!--<img src="https://static1.squarespace.com/static/537c12a7e4b0ca838c2ee48d/564c0158e4b06f49e6635c6a/5652add8e4b02e2458acf0d1/1460365453183/Gateway_1200+Blur.jpg?format=2500w">-->
+                    <img src="../images/genre.jpg">
                     <div class="caption center-align">
                         <h3>WELCOME ADMIN</h3>
                         <h5 class="light grey-text text-lighten-3">Efficient Way Of Keeping Track Of Your Stocks</h5>

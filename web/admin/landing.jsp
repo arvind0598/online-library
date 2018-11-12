@@ -38,13 +38,13 @@
        <div class="slider">
             <ul class="slides">
                 <li>
-                    <!--<img src="https://s20998.pcdn.co/wp-content/uploads/2017/08/IMG_0003.jpg">-->
+                    <img src="../images/librarybooks.png">
                     <div class="caption left-align">
-                        <h3>Organize the products</h3>
+                        <h3>Organize new products</h3>
                     </div>
                 </li>
                 <li>
-                    <!--<img src="https://cdn.forbesmiddleeast.com/en/wp-content/uploads/sites/3/2017/04/shutterstock_521741356-1635x1091.jpg">-->
+                    <img src="../images/donate3.jpg">
                     <div class="caption right-align">
                         <h3>Keep Track Of Orders</h3>
                     </div>
