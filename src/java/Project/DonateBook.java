@@ -61,12 +61,10 @@ public class DonateBook extends HttpServlet {
         String product_name = request.getParameter("product_name");
         String desc = request.getParameter("desc");
         String keywords = request.getParameter("keywords");
-        String temp_cost = request.getParameter("cost");
         String temp_age = request.getParameter("age");        
         String author = request.getParameter("author");
 
         Boolean author_ok = Helper.regexChecker(Helper.Regex.MIN_SIX_ALPHA_SPACES, author);
-        Boolean cost_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_cost);
         Boolean age_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_age);
         Boolean cust_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_cust_id);
         Boolean product_name_ok = Helper.regexChecker(Helper.Regex.MIN_SIX_ALPHANUM_SPACES, product_name);
@@ -77,14 +75,12 @@ public class DonateBook extends HttpServlet {
         if (!cust_ok) {
             obj.put("status", -1);
             obj.put("message", "Login to continue.");
-        } else if (!author_ok || !cost_ok || !product_name_ok || !desc_ok || !keywords_ok || !cat_id_ok || !age_ok) {
+        } else if (!author_ok || !product_name_ok || !desc_ok || !keywords_ok || !cat_id_ok || !age_ok) {
             obj.put("status", -1);
             obj.put("message", "Invalid Request");
         } 
         else {
-            int cost = Integer.parseInt(temp_cost);
             JSONObject product = new JSONObject();
-            product.put("cost", cost);
             product.put("author", author);
             product.put("name", product_name);
             product.put("desc", desc);

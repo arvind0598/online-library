@@ -77,15 +77,11 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="input-field col l4 m4 s4">
-                            <input id="offer" type="text" class="validate" name="author" required>
-                            <label for="offer"> Author Name </label>
-                        </div>
-                        <div class="input-field col l4 m4 s4">
-                            <input id="cost" type="text" class="validate" name="cost" required>
-                            <label for="cost"> Cost </label>
-                        </div>             
-                        <div class="input-field col l4 m4 s4">
+                        <div class="input-field col l6 m6 s6">
+                            <input id="author" type="text" class="validate" name="author" required>
+                            <label for="author"> Author Name </label>
+                        </div>          
+                        <div class="input-field col l6 m6 s6">
                             <input id="age" type="number" class="validate" name="age" min="1" max="9999" required>
                             <label for="age"> Age(in months) </label>
                         </div>

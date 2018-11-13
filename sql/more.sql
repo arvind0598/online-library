@@ -305,12 +305,12 @@ end;
 /
 
 create or replace function add_secondhand_book
-	(name_x in varchar, author_x in varchar, genre_id_x in int, details_x in varchar, keywords_x in varchar, cost_x in int, age_x in int, cust_x in int)
+	(name_x in varchar, author_x in varchar, genre_id_x in int, details_x in varchar, keywords_x in varchar, age_x in int, cust_x in int)
 return int
 is
 	book_x varchar(50);
 begin
-	insert into books(name, author, genre, details, keywords, cost, owner, age, display) values(name_x, author_x, genre_id_x, details_x, keywords_x, cost_x, cust_x, age_x, 0);
+	insert into books(name, author, genre, details, keywords, cost, owner, age, display) values(name_x, author_x, genre_id_x, details_x, keywords_x, 1, cust_x, age_x, 0);
 	select name into book_x from books where id = (select max(id) from books);
 	insert into internallogs(login, action, details) values(cust_x, 'ADD_SECONDHAND', book_x);
 	return 1;
@@ -337,10 +337,10 @@ end;
 /
 
 create or replace procedure approve_secondhand_book
-	(book_id_x in int, adm_x in int)
+	(book_id_x in int, cost_x in int, adm_x in int)
 is
 begin
-	update books set display = 1 where id = book_id_x;
+	update books set display = 1, cost = cost_x where id = book_id_x;
 	insert into internallogs(login, action, details) values(adm_x, 'APPROVE_BOOK', book_id_x);
 end;
 

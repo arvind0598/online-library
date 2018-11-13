@@ -50,7 +50,7 @@
                                 <p>
                                     Author: ${book.value.author} <br>
                                     Cost: Rs. ${book.value.cost} <br>
-                                    Cost: ${book.value.age} months <br>
+                                    Age ${book.value.age} months <br>
                                 </p>
                             </div>
                             <div id="tab${book.key}test2">
@@ -63,8 +63,26 @@
                             </div>
                         </div>
                         <div class="card-action">
-                            <a href="javascript:approveBook(${book.key})">Approve Book</a>
+                            <a class="modal-trigger" href="#modal${book.key}">Approve Book</a>                        
                         </div>
+                    </div>
+                </div>
+
+                <div id="modal${book.key}" class="modal bottom-sheet">
+                    <div class="modal-content">
+                        <h4>${book.value.name}</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <form class="container" onsubmit="return approveBook(this)">
+                            <input hidden value="${book.key}" name="book">
+                            <div class="input-field col l6 m6 s6">
+                                <input id="cost" type="number" class="validate" name="cost" required>
+                                <label for="cost"> Enter Cost </label>
+                            </div>                               
+                            <button class="btn btn-large waves-effect waves-light center-align" type="submit">Confirm
+                                <i class="material-icons right">send</i>
+                            </button>        
+                        </form>
                     </div>
                 </div>
             </c:forEach>
@@ -73,14 +91,21 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="../js/materialize.min.js"></script>
         <script>
-            var elem = document.querySelector('.tabs'); var instance = M.Tabs.init(elem, {});
+            var elem = document.querySelector('.tabs');
+            var instance = M.Tabs.init(elem, {});
 
-            const approveBook = (id) => {
+            document.addEventListener('DOMContentLoaded', function () {
+                var elems = document.querySelectorAll('.modal');
+                var instances = M.Modal.init(elems);
+            });
+
+            const approveBook = (form) => {
                 $.ajax({
                     type: "POST",
                     url: "../serve_approve",
                     data: {
-                        id: id
+                        id: form[0].value,
+                        cost : form[1].value
                     },
                     success: data => {
                         console.log(data);
@@ -96,6 +121,7 @@
                         console.log(err);
                     }
                 });
+                return false;
             }
 
             //        ul = $('#orders'); // your parent ul element

@@ -401,7 +401,7 @@ public class Database {
     public JSONObject getBooksPerGenreForAdmin(int genre) {
         JSONObject obj = new JSONObject();
         try (Connection conn = connectSql()) {
-            PreparedStatement stmt = conn.prepareStatement("select id, name, cost, stock from books where genre = ?");
+            PreparedStatement stmt = conn.prepareStatement("select id, name, cost, stock from books where genre = ? and display = 1");
             stmt.setInt(1, genre);
             ResultSet res = stmt.executeQuery();
             
@@ -550,16 +550,15 @@ public class Database {
         Boolean status = false;
         try {
             Connection conn = connectSql();
-            CallableStatement stmt = conn.prepareCall("begin ? := add_secondhand_book(?,?,?,?,?,?,?,?); end;");
+            CallableStatement stmt = conn.prepareCall("begin ? := add_secondhand_book(?,?,?,?,?,?,?); end;");
             stmt.registerOutParameter(1, Types.INTEGER);
             stmt.setString(2, product.get("name").toString());
             stmt.setString(3, product.get("author").toString());
             stmt.setInt(4, Integer.parseInt(product.get("genre").toString()));
             stmt.setString(5, product.get("desc").toString());
             stmt.setString(6, product.get("keywords").toString());
-            stmt.setInt(7, Integer.parseInt(product.get("cost").toString()));
-            stmt.setInt(8, Integer.parseInt(product.get("age").toString()));
-            stmt.setInt(9, customer_id);
+            stmt.setInt(7, Integer.parseInt(product.get("age").toString()));
+            stmt.setInt(8, customer_id);
             stmt.execute();
             status = stmt.getInt(1) == 1;
             conn.close();
@@ -599,12 +598,13 @@ public class Database {
         return x;
     }
 
-    Boolean approveBook(int book_id, int admin_id) {
+    Boolean approveBook(int book_id, int cost, int admin_id) {
         Boolean status = false;
         try (Connection conn = connectSql()) {
-            CallableStatement stmt = conn.prepareCall("call approve_secondhand_book(?,?)");
+            CallableStatement stmt = conn.prepareCall("call approve_secondhand_book(?,?,?)");
             stmt.setInt(1, book_id);
-            stmt.setInt(2, admin_id);
+            stmt.setInt(2, cost);
+            stmt.setInt(3, admin_id);
             stmt.execute();
             conn.close();
             status = true;

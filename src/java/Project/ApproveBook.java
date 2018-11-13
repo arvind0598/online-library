@@ -57,8 +57,9 @@ public class ApproveBook extends HttpServlet {
         
         String temp_admin_id = sess.getAttribute("admlogin") == null ? "-1" : sess.getAttribute("admlogin").toString();
         String temp_id = request.getParameter("id");
+        String temp_cost = request.getParameter("cost");
 
-        JSONObject obj = processRequest(temp_admin_id, temp_id);
+        JSONObject obj = processRequest(temp_admin_id, temp_id, temp_cost);
 
         try (PrintWriter out = response.getWriter()) {
             out.println(obj);
@@ -76,11 +77,12 @@ public class ApproveBook extends HttpServlet {
         return "updates offers or stocks for a given product";
     }// </editor-fold>
 
-    public JSONObject processRequest(String temp_admin_id, String temp_book_id) {
+    public JSONObject processRequest(String temp_admin_id, String temp_book_id, String temp_cost) {
 
         Boolean admin_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_admin_id);
         Boolean id_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_book_id);
-
+        Boolean cost_ok = Helper.regexChecker(Helper.Regex.NUMBERS_ONLY, temp_cost);
+        
         JSONObject obj = new JSONObject();
 
         if (!admin_ok) {
@@ -89,7 +91,7 @@ public class ApproveBook extends HttpServlet {
             return obj;
         } 
         
-        else if (!id_ok) {
+        else if (!id_ok || !cost_ok) {
             obj.put("status", -1);
             obj.put("message", "Input provided was not valid.");
             return obj;
@@ -97,8 +99,9 @@ public class ApproveBook extends HttpServlet {
 
         int book_id = Integer.parseInt(temp_book_id);
         int admin_id = Integer.parseInt(temp_admin_id);
+        int cost = Integer.parseInt(temp_cost);
 
-        Boolean status = new Database().approveBook(book_id,admin_id);
+        Boolean status = new Database().approveBook(book_id, cost, admin_id);
 
         obj.put("status", status ? 1 : 0);
         obj.put("message", status ? "Succesfully approved." : "Unable to approve.");
