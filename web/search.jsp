@@ -22,7 +22,6 @@
     JSONObject products = new Project.Database().searchProducts(str);
     request.setAttribute("products", products);
     session.setAttribute("currentpage", "search.jsp?" + request.getQueryString());
-    out.println(products);
 %>
 
 <!DOCTYPE html>
@@ -36,6 +35,29 @@
     </head>
     <body>
         <%@ include file="navbar.jspf"%>
+        <div class="container">
+            <h2> Search Results</h2>
+            <div id="search">
+                <div class="row">
+                    <c:forEach var="prod" items="${products}">
+                        <div class="col m6">
+                        <div class="card small hoverable">
+                            <div class="card-content">
+                                <h3> Book ID: ${prod.key} </h3>
+                                        <p> Book Name: ${prod.value.name} </p>
+                                        <p> Author: ${prod.value.author}</p>
+                                        <p> Cost: Rs. ${prod.value.cost} </p>
+                                    </div>
+                                    <div class="card-action">
+                                        <a href="book.jsp?id=${prod.key}">Product Details</a>
+                                    </div> 
+                                </div>
+                            </div>
+                        </section>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
 

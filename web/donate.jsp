@@ -60,7 +60,7 @@
                                     <option value="${genre.key}"> ${genre.value} </option>
                                 </c:forEach>
                             </select>
-                            <label>Order Status</label>
+                            <label>Genre</label>
                         </div>
                     </div>
                     <div class="row">
