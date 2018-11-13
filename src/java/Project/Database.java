@@ -155,9 +155,9 @@ public class Database {
 
             while (res.next()) {
                 JSONObject book = new JSONObject();
-                book.put("name", res.getString(2));
+                book.put("name", Helper.capitalizeWord(res.getString(2)));
                 book.put("cost", res.getInt(3));
-                book.put("author", res.getString(4));
+                book.put("author", Helper.capitalizeWord(res.getString(4)));
                 obj.put(res.getInt(1), book);
             }
 
@@ -178,7 +178,7 @@ public class Database {
 
             if (res.next()) {
                 obj.put("email", res.getString(1));
-                obj.put("name", res.getString(2));
+                obj.put("name", Helper.capitalizeWord(res.getString(2)));
                 obj.put("address", res.getString(3));
                 obj.put("donated", res.getInt(4));
             }
@@ -465,7 +465,7 @@ public class Database {
                 JSONObject item = new JSONObject();
                 int order_id = res.getInt(1);
                 JSONObject orderItems = getOrderItems(order_id);
-                item.put("name", res.getString(2));
+                item.put("name", Helper.capitalizeWord(res.getString(2)));
                 item.put("bill", res.getInt(3));
                 item.put("status", res.getInt(4));
                 item.put("items", orderItems);
@@ -492,7 +492,7 @@ public class Database {
 
             while (res.next()) {
                 JSONObject x = new JSONObject();
-                x.put("name", res.getString(2));
+                x.put("name", Helper.capitalizeWord(res.getString(2)));
                 x.put("qty", res.getInt(3));
                 x.put("stock", res.getInt(4));
                 obj.put(res.getInt(1), x);
@@ -574,7 +574,7 @@ public class Database {
         JSONObject x = new JSONObject();
         try {
             Connection conn = connectSql();
-            PreparedStatement stmt = conn.prepareStatement("select books.id, genres.name, books.name, details, cost, age, (select name from login where login.id = owner), author from books join genres on(books.genre = genres.id) where stock > 0 and display = 0");
+            PreparedStatement stmt = conn.prepareStatement("select books.id, genres.name, books.name, details, age, (select name from login where login.id = owner), author from books join genres on(books.genre = genres.id) where stock > 0 and display = 0");
             ResultSet res = stmt.executeQuery();
 
             while (res.next()) {
@@ -583,10 +583,9 @@ public class Database {
                 obj.put("genre", Helper.capitalizeWord(res.getString(2)));
                 obj.put("name", Helper.capitalizeWord(res.getString(3)));
                 obj.put("details", res.getString(4));
-                obj.put("cost", res.getInt(5));
-                obj.put("age", res.getInt(6));
-                obj.put("owner", res.getString(7));
-                obj.put("author", Helper.capitalizeWord(res.getString(8)));
+                obj.put("age", res.getInt(5));
+                obj.put("owner", res.getString(6));
+                obj.put("author", Helper.capitalizeWord(res.getString(7)));
                 x.put(book_id, obj);
             }
 

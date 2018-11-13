@@ -64,7 +64,7 @@
                     <input hidden type="text" value="${cat_id}" name="cat_id"/>
                     <div class="row">
                         <div class="input-field col l6 m6 s12">
-                            <input id="product_name" type="text" class="validate" name="product_name" required>
+                            <input id="product_name" type="text" class="validate" name="product_name" pattern="^[a-zA-Z0-9 ]{6,}$" title="6 or more characters" required>
                             <label for="product_name"> Product Name </label>
                         </div>
                         <div class="input-field col l6 m6 s12">
@@ -74,28 +74,28 @@
                     </div>
                     <div class="row">
                         <div class="input-field col l12 m12 s12">
-                            <textarea id="desc" class="materialize-textarea" required name="desc"></textarea>
+                            <textarea id="desc" class="materialize-textarea" pattern="[a-zA-Z0-9.?! ]{6,}" title="6 or more characters" required name="desc"></textarea>
                             <label for="desc"> Product Description </label>
                         </div>
                     </div> 
                     
                     <div class="row">
                         <div class="input-field col l12 m12 s12">
-                            <input id="keywords" type="text" class="validate" name="keywords" required>
+                            <input id="keywords" type="text" class="validate" name="keywords" pattern="^[a-z ]{6,}$" title="6 or more lowercase characters" required>
                             <label for="keywords"> Keywords </label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col l4 m4 s4">
-                            <input id="offer" type="text" class="validate" name="author" required>
+                            <input id="offer" type="text" class="validate" name="author" pattern="^[a-zA-Z ]{6,}$" title="6 or more alphabets" required>
                             <label for="offer"> Author Name </label>
                         </div>
                         <div class="input-field col l4 m4 s4">
-                            <input id="cost" type="text" class="validate" name="cost" required>
+                            <input id="cost" type="text" class="validate" name="cost" pattern="^[0-9]+$" title="Numbers only" required>
                             <label for="cost"> Cost </label>
                         </div>             
                         <div class="input-field col l4 m4 s4">
-                            <input id="stock" type="text" class="validate" name="stock" required>
+                            <input id="stock" type="text" class="validate" name="stock" pattern="^[0-9]+$" title="Numbers only" required>
                             <label for="stock"> Stock </label>
                         </div>
                     </div>

@@ -17,7 +17,7 @@
                     </form>
                 </li>
                 <c:choose>
-                    <c:when test="${sessionScope.login ge 0}">
+                    <c:when test="${sessionScope.login gt 0}">
                         <li><a href="cart.jsp"> Cart </a></li>
                         <li><a href="profile.jsp"> My Profile </a></li>
                         <li><a href="serve_logout"> Sign Out </a></li>

@@ -49,13 +49,13 @@
                             <div id="tab${book.key}test1">
                                 <p>
                                     Author: ${book.value.author} <br>
-                                    Cost: Rs. ${book.value.cost} <br>
+                                     Genre: ${book.value.genre} <br>
                                     Age ${book.value.age} months <br>
                                 </p>
                             </div>
                             <div id="tab${book.key}test2">
                                 <p>
-                                    Genre: ${book.value.genre} <br>
+                                   
                                     Owner ${book.value.owner} <br>
                                     Details: <br>
                                     ${book.value.details}
@@ -76,7 +76,7 @@
                         <form class="container" onsubmit="return approveBook(this)">
                             <input hidden value="${book.key}" name="book">
                             <div class="input-field col l6 m6 s6">
-                                <input id="cost" type="number" class="validate" name="cost" required>
+                                <input id="cost" type="number" class="validate" name="cost" pattern="^[0-9]+$" title="Numbers only" required>
                                 <label for="cost"> Enter Cost </label>
                             </div>                               
                             <button class="btn btn-large waves-effect waves-light center-align" type="submit">Confirm

@@ -56,7 +56,7 @@
                                 </div>  
                             </form>
                         </div>
-<!--                    <table>
+                    <table>
                             <thead>
                                 <tr>
                                     <th> Name </th>
@@ -65,15 +65,15 @@
                                 </tr>
                             </thead>
                         <tbody>
-                            <%--<c:forEach var="item" items="${order.value.items}">--%>
+                            <c:forEach var="item" items="${order.value.items}">
                             <tr>
-                                <td> ${item.item.name} </td>
-                                <td> ${item.item.stock} </td>
-                                <td> ${item.qty} </td>   
+                                <td> ${item.value.name} </td>
+                                <td> ${item.value.stock} </td>
+                                <td> ${item.value.qty} </td>   
                             </tr>
-                            <%--</c:forEach>--%>
+                            </c:forEach>
                         </tbody>
-                    </table>-->
+                    </table>
                 </section>
                 
             </c:forEach>
